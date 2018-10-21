@@ -1,0 +1,1 @@
+THEANO_FLAGS="device=cuda0, floatX=float32" python train.py --emb ../preprocessed_data/domain/w2v_embedding --domain domain -o output_dir
