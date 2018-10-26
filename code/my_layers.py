@@ -267,7 +267,7 @@ class MaxMargin_mod(Layer):
 
         steps = z_n.shape[1]
 	#print(steps)
-        pos = K.sum(z_s*r_s, axis=-1, keepdims=True)
+        pos = K.sum((z_s+w_r)*r_s, axis=-1, keepdims=True)
 	#pos = K.repeat_elements(pos, steps, axis=-1)
         pos = K.repeat_elements(pos, steps, axis=(len(pos.shape)-1))
 	#print(pos)		
