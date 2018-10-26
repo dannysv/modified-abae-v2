@@ -260,15 +260,19 @@ class MaxMargin_mod(Layer):
         z_n = z_n / K.cast(K.epsilon() + K.sqrt(K.sum(K.square(z_n), axis=-1, keepdims=True)), K.floatx())
         r_s = r_s / K.cast(K.epsilon() + K.sqrt(K.sum(K.square(r_s), axis=-1, keepdims=True)), K.floatx())
         w_r = w_r / K.cast(K.epsilon() + K.sqrt(K.sum(K.square(w_r), axis=-1, keepdims=True)), K.floatx())
+        
+
+	print("w_r")
+        print(w_r.shape)
 
         steps = z_n.shape[1]
 	#print(steps)
         pos = K.sum(z_s*r_s, axis=-1, keepdims=True)
-	print("pos")
-        print(pos.shape)
 	#pos = K.repeat_elements(pos, steps, axis=-1)
         pos = K.repeat_elements(pos, steps, axis=(len(pos.shape)-1))
 	#print(pos)		
+	print("pos")
+        print(pos.shape)
         r_s = K.expand_dims(r_s, dim=-2)
         r_s = K.repeat_elements(r_s, steps, axis=1)
         neg = K.sum(z_n*r_s, axis=-1)
