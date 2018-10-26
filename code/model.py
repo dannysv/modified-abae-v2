@@ -2,7 +2,7 @@ import logging
 import keras.backend as K
 from keras.layers import Dense, Activation, Embedding, Input
 from keras.models import Model
-from my_layers import Attention, Average, WeightedSum, WeightedAspectEmb, MaxMargin, W_reference
+from my_layers import Attention, Average, WeightedSum, WeightedAspectEmb, MaxMargin, W_reference, MaxMargin_mod
 
 
 logging.basicConfig(level=logging.INFO,
@@ -35,15 +35,17 @@ def create_model(args, maxlen, vocab):
 
     ##### Compute sentence representation #####
     e_w = word_emb(sentence_input)
-    ref_w = word_emb(refwords_input)
+    w_r = word_emb(refwords_input)
     #y_s = Average()(e_w)
     #line to modify
     #y_s = Average()(e_w)
-    y_s = W_reference()(ref_w)
-    #print(y_s)
+    y_s = W_reference()(w_r)
+    #print("y_s")
+    #print(y_s.shape)
     att_weights = Attention(name='att_weights')([e_w, y_s])
     z_s = WeightedSum()([e_w, att_weights])
-    #print(z_s)	
+    #print(z_s.shape)
+    print(z_s)	
     ##### Compute representations of negative instances #####
     e_neg = word_emb(neg_input)
     z_n = Average()(e_neg)
@@ -55,8 +57,17 @@ def create_model(args, maxlen, vocab):
             W_regularizer=ortho_reg)(p_t)
 
     ##### Loss #####
-    #loss = MaxMargin(name='max_margin')([z_s, z_n, r_s])[0]
-    loss = MaxMargin(name='max_margin')([z_s, z_n, r_s])[0]
+
+    print("z_s")
+    print(y_s.shape)
+    print("z_n")
+    print(z_n.shape)
+    print("r_s")
+    print(r_s.shape)
+    print("y_s")
+    print(y_s.shape)
+    loss = MaxMargin_mod(name='max_margin')([z_s, z_n, r_s, y_s])[0]
+    #loss = MaxMargin_mod(name='max_margin_mod')([z_s, z_n, r_s, w_r])[0]
     model = Model(input=[sentence_input, neg_input, refwords_input], output=loss)
     #print(loss[0])    
 
